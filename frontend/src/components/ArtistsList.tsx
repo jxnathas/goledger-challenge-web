@@ -1,49 +1,27 @@
 "use client";
-
 import { useEffect, useState } from "react";
+import { useMusic } from "../app/context/MusicContext";
 import { api } from "../../services/api";
 
-type Artist = {
-    id: string;
-    name: string;
-};
-
 const Artists: React.FC = () => {
-    const [artists, setArtists] = useState<Artist[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    
-    const fetchArtists = async () => {
-        try {
-            const response = await api.post("/api/query/search", {
-                query:{
-                    selector: {
-                        "@assetType": "artist",
-                    },
-                },
-            });
-            
-            const artistsData = response.data.result.map((artist: any) => ({
-                id: artist["@key"].replace("artist:", ""),
-                name: artist.name,
-            }));
-
-            setArtists(artistsData);
-
-        } catch (err) {
-            setError(err+" Erro ao buscar artista");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { artists, loadArtists, addArtist, removeArtist } = useMusic();
+    const [newArtistName, setNewArtistName] = useState('');
+    const [newArtistCountry, setNewArtistCountry] = useState('');
 
     useEffect(() => {
-        fetchArtists();
+        loadArtists();
     }, []);
 
-    if (loading) return <div>Carregando artistas...</div>;
-    if (error) return <div>{error}</div>;
-
+    const handleAddArtist = async () => {
+        await addArtist({ 
+            id: '',
+            name: newArtistName,
+            country: newArtistCountry
+        });
+        setNewArtistName('');
+        setNewArtistCountry('');
+    }
+    
     return (
         <div>
             <h1>Artistas</h1>
