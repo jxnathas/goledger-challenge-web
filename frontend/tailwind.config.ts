@@ -11,6 +11,10 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        cyan75: "#75EDEA",
+        cyanB7: "#77D8D5",
+        darkcyan: "#002F39",
+
       },
     },
   },
