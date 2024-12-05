@@ -3,167 +3,83 @@ import { createContext, useContext, useState } from 'react';
 import { Artist, Album, Song, Playlist } from '@/types/types';
 import { api } from "../../../services/api";
 
+type AssetType = 'artist' | 'album' | 'song' | 'playlist';
+
 type MusicContextType = {
-    artists: Artist[];
-    loadArtists: () => Promise<void>;
-    addArtist: (artist: Artist) => Promise<void>;
-    removeArtist: (id: string) => Promise<void>;
-    
-    albums: Album[];
-    loadAlbums: () => Promise<void>;
-    addAlbum: (album: Album) => Promise<void>;
-    removeAlbum: (id: string) => Promise<void>;
-    
-    songs: Song[];
-    loadSongs: () => Promise<void>;
-    addSong: (song: Song) => Promise<void>;
-    removeSong: (id: string) => Promise<void>;
-    
-    playlists: Playlist[];
-    loadPlaylists: () => Promise<void>;
-    addPlaylist: (playlist: Playlist) => Promise<void>;
-    removePlaylist: (id: string) => Promise<void>;
+    assets: Record<AssetType, any[]>;
+    loadAssets: (assetType: AssetType) => Promise<void>;
+    addAsset: (assetType: AssetType, asset: any) => Promise<void>;
+    removeAsset: (assetType: AssetType, id: string) => Promise<void>;
+    editAsset: (assetType: AssetType, id: string, updatedAsset: any) => Promise<void>;
 };
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [artists, setArtists] = useState<Artist[]>([]);
-    const [albums, setAlbums] = useState<Album[]>([]);
-    const [songs, setSongs] = useState<Song[]>([]);
-    const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const [assets, setAssets] = useState<Record<AssetType, any[]>>({
+        artist: [],
+        album: [],
+        song: [],
+        playlist: [],
+    });
 
-    const loadArtists = async () => {
+    const loadAssets = async (assetType: AssetType) => {
         try {
-          const response = await api.get('/query/getSchema');
-          setArtists(response.data.artists || []);
+            const response = await api.post('query/search', {
+                query: { selector: { "@assetType": assetType } },
+            });
+            const transformedData = (response.data.result || []).map((item: any) => ({
+                ...item,
+                id: item['@key'],
+            }));
+            setAssets((prev) => ({ ...prev, [assetType]: transformedData }));
         } catch (error) {
-          console.error('Erro ao carregar artistas:', error);
-        }
-      };
-    
-      const loadAlbums = async () => {
-        try {
-          const response = await api.get('/query/getSchema');
-          setAlbums(response.data.albums || []);
-        } catch (error) {
-          console.error('Erro ao carregar álbuns:', error);
-        }
-      };
-    
-      const loadSongs = async () => {
-        try {
-          const response = await api.get('/query/getSchema');
-          setSongs(response.data.songs || []);
-        } catch (error) {
-          console.error('Erro ao carregar músicas:', error);
-        }
-      };
-    
-      const loadPlaylists = async () => {
-        try {
-          const response = await api.get('/query/getSchema');
-          setPlaylists(response.data.playlists || []);
-        } catch (error) {
-          console.error('Erro ao carregar playlists:', error);
-        }
-      };
-
-    const addArtist = async (artist: Artist) => {
-        try {
-            const response = await api.post('invoke/createAsset', artist);
-            setArtists((prev) => [...prev, response.data]);
-        } catch (err) {
-            console.error('Erro ao adicionar artista',err);
+            console.error(`Erro ao carregar ${assetType}s:`, error);
         }
     };
 
-    const removeArtist = async (id: string) => {
+    const addAsset = async (assetType: AssetType, asset: any) => {
+        try {
+            const response = await api.post('invoke/createAsset', asset);
+            setAssets((prev) => ({
+                ...prev,
+                [assetType]: [...prev[assetType], response.data],
+            }));
+        } catch (err) {
+            console.error(`Erro ao adicionar ${assetType}`, err);
+        }
+    };
+
+    const removeAsset = async (assetType: AssetType, id: string) => {
         try {
             await api.post('invoke/deleteAsset', { id });
-            setArtists((prev) => prev.filter((artist) => artist.id !== id));
+            setAssets((prev) => ({
+                ...prev,
+                [assetType]: prev[assetType].filter((item) => item.id !== id),
+            }));
         } catch (err) {
-            console.error('Erro ao remover artista',err);
+            console.error(`Erro ao remover ${assetType}`, err);
         }
     };
 
-    const addAlbum = async (album: Album) => {
+    const editAsset = async (assetType: AssetType, id: string, updatedAsset: any) => {
         try {
-            const response = await api.post('invoke/createAsset', album);
-            setAlbums((prev) => [...prev, response.data]);
-        } catch (err) {
-            console.error('Erro ao adicionar album',err);
-        }
-    };
-
-    const removeAlbum = async (id: string) => {
-        try {
-            await api.post('invoke/deleteAsset', { id });
-            setAlbums((prev) => prev.filter((album) => album.id !== id));
-        } catch (err) {
-            console.error('Erro ao remover album',err);
-        }
-    };
-
-    const addSong = async (song: Song) => {
-        try {
-            const response = await api.post('invoke/createAsset', song);
-            setSongs((prev) => [...prev, response.data]);
-        } catch (err) {
-            console.error('Erro ao adicionar musica',err);
-        }
-    };
-
-    const removeSong = async (id: string) => {
-        try {
-            await api.post('invoke/deleteAsset', { id });
-            setSongs((prev) => prev.filter((song) => song.id !== id));
-        } catch (err) {
-            console.error('Erro ao remover musica',err);
-        }
-    };
-
-    const addPlaylist = async (playlist: Playlist) => {
-        try {
-            const response = await api.post('invoke/createAsset', playlist);
-            setPlaylists((prev) => [...prev, response.data]);
-        } catch (err) {
-            console.error('Erro ao adicionar playlist',err);
-        }
-    };
-
-    const removePlaylist = async (id: string) => {
-        try {
-            await api.post('invoke/deleteAsset', { id });
-            setPlaylists((prev) => prev.filter((playlist) => playlist.id !== id));
-        } catch (err) {
-            console.error('Erro ao remover playlist',err);
+            const response = await api.put(`/invoke/updateAsset/${id}`, updatedAsset);
+            setAssets((prev) => ({
+                ...prev,
+                [assetType]: prev[assetType].map((item) =>
+                    item.id === id ? { ...item, ...response.data } : item
+                ),
+            }));
+        } catch (error) {
+            console.error(`Erro ao editar ${assetType}:`, error);
         }
     };
 
     return (
-        <MusicContext.Provider
-            value={{
-                artists,
-                loadArtists,
-                addArtist,
-                removeArtist,
-                albums,
-                loadAlbums,
-                addAlbum,
-                removeAlbum,
-                songs,
-                loadSongs,
-                addSong,
-                removeSong,
-                playlists,
-                loadPlaylists,
-                addPlaylist,
-                removePlaylist,
-            }}
-    >
-        {children}
-    </MusicContext.Provider>
+        <MusicContext.Provider value={{ assets, loadAssets, addAsset, removeAsset, editAsset }}>
+            {children}
+        </MusicContext.Provider>
     );
 };
 
