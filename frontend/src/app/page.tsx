@@ -1,19 +1,14 @@
-import Image from "next/image";
-import { ArtistList } from "@/components/ArtistList";
-import { MusicProvider } from "./context/MusicContext";
+import { MusicProvider } from "@/app/context/MusicContext";
 import { AlbumList } from "@/components/AlbumList";
-import { SongList } from "@/components/SongList";
-import { PlaylistList } from "@/components/PlaylistList";
+import { ArtistList } from "@/components/ArtistList";
+import { Header } from "@/components/Header";
+import { Section } from "@/components/Section";
 
 export default function Home() {
   return (
       <MusicProvider>
           <div>
-              <h1>Music App</h1>
-             {/* <ArtistList /> */}
-             {/* <AlbumList /> */}
-             {/* <SongList /> */}
-             {/* <PlaylistList /> */}
+            <Header/>
           </div>
       </MusicProvider>
   );

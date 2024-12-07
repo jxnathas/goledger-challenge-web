@@ -28,9 +28,10 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             const response = await api.post('query/search', {
                 query: { selector: { "@assetType": assetType } },
             });
+            console.log(response.data.result);
             const transformedData = (response.data.result || []).map((item: any) => ({
                 ...item,
-                id: item['@key'],
+                id: item['@key'].replace('album:', ''),
             }));
             setAssets((prev) => ({ ...prev, [assetType]: transformedData }));
         } catch (error) {

@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Artist } from '@/types/types';
 import { useMusic } from '@/app/context/MusicContext';
+import { ArtistCard } from './Artist';
 
 export const ArtistList: React.FC = () => {
     const { assets, loadAssets, removeAsset } = useMusic();
@@ -19,20 +20,19 @@ export const ArtistList: React.FC = () => {
 
     return (
         <div>
-            <h1>Lista de Artistas</h1>
+            <h1 className="text-2xl font-bold mb-4">Artists</h1>
             {assets.artist.length === 0 ? (
                 <p>Nenhum artista encontrado.</p>
             ) : (
-                <ul>
+                <div className="grid grid-cols-10 gap-4">
                     {assets.artist.map((artist: Artist) => (
-                        <li key={artist.id}>
-                            <div>
-                                <strong>{artist.name} </strong>
-                                <button onClick={() => handleRemoveArtist(artist.id)}>Remover</button>
-                            </div>
-                        </li>
+                        <ArtistCard
+                            key={artist.id}
+                            name={artist.name}
+                            image='https://placehold.co/160x160/white/darkgray'
+                        />
                     ))}
-                </ul>
+                </div>
             )}
         </div>
     );
