@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import { Artist, Album, Song, Playlist } from '@/types/types';
 import { api } from "../../../services/api";
 
@@ -23,22 +23,22 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         playlist: [],
     });
 
-    const loadAssets = async (assetType: AssetType) => {
+    const loadAssets = useCallback(async (assetType: AssetType) => {
         try {
+            console.log(`Carregando ${assetType}...`);
             const response = await api.post('query/search', {
                 query: { selector: { "@assetType": assetType } },
             });
-            console.log(response.data.result);
             const transformedData = (response.data.result || []).map((item: any) => ({
                 ...item,
-                id: item['@key'].replace('album:', ''),
+                id: item['@key'].replace(`${assetType}:`, ''),
             }));
             setAssets((prev) => ({ ...prev, [assetType]: transformedData }));
         } catch (error) {
             console.error(`Erro ao carregar ${assetType}s:`, error);
         }
-    };
-
+    }, []);
+    
     const addAsset = async (assetType: AssetType, asset: any) => {
         try {
             const response = await api.post('invoke/createAsset', asset);

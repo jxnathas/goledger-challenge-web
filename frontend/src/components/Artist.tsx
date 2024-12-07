@@ -13,6 +13,5 @@ export const ArtistCard: React.FC<ArtistCardProps> = ({ name, image }) => (
             className="rounded-full w-40 h-40 mb-2 object-cover"
         />
         <p className="text-sm font-bold text-center">{name}</p>
-        <p className="text-xs text-gray-600 text-center">Artist</p>
     </div>
 );

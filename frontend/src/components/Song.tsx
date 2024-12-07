@@ -1,21 +1,19 @@
-type SongProps = {
-    title: string;
-    artist: string;
-    image: string; 
-  };
-  
-export const Song: React.FC<SongProps> = ({ title, artist, image }) => {
-    return (
-      <div className="flex items-center space-x-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
-        <img
-          src={image}
-          alt={`Cover of ${title}`}
-          className="w-16 h-16 rounded-lg object-cover"
-        />
-        <div className="flex flex-col">
-          <span className="text-white font-semibold">{title}</span>
-          <span className="text-gray-400 text-sm">{artist}</span>
-        </div>
-      </div>
-    );
-  };
+type SongCardProps = {
+  name: string;
+  album: string;
+  image: string; 
+};
+
+export const SongCard: React.FC<SongCardProps> = ({ name, album, image }) => {
+  return (
+    <div className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform rounded-sm p-2 w-48">
+      <img
+        src={image}
+        alt={`Cover of ${name}`}
+        className="w-40 h-40 mb-2 rounded-md object-cover"
+      />
+      <p className="text-sm font-bold text-center">{name}</p>
+      <p className="text-xs text-gray-600 text-center">{album}</p>
+    </div>
+  );
+};

@@ -1,19 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Playlist } from "@/types/types";
 import { useMusic } from "@/app/context/MusicContext";
+import { PlaylistCard } from "./Playlist";
 
 export const PlaylistList: React.FC = () => {
     const { assets, loadAssets, removeAsset } = useMusic();
-    const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
     useEffect(() => {
         loadAssets("playlist");
     }, [loadAssets]);
-
-    useEffect(() => {
-        setPlaylists(assets.playlist);
-    }, [assets.playlist]);
 
     const handleRemovePlaylist = async (id: string) => {
         const confirmDelete = window.confirm(
@@ -25,23 +21,18 @@ export const PlaylistList: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1>Lista de Playlists</h1>
-            {playlists.length === 0 ? (
+        <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
+            {assets.playlist.length === 0 ? (
                 <p>Nenhuma playlist encontrada.</p>
             ) : (
-                <ul>
-                    {playlists.map((playlist: Playlist) => (
-                        <li key={playlist.id}>
-                            <div>
-                                <strong>{playlist.name} </strong>
-                                <button onClick={() => handleRemovePlaylist(playlist.id)}>
-                                    Remover
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                assets.playlist.map((playlist: Playlist) => (
+                    <div key={playlist.id} className="flex-shrink-0">
+                        <PlaylistCard
+                            name={playlist.name}
+                            image='https://placehold.co/160x160/white/darkgray'
+                        />
+                    </div>
+                ))
             )}
         </div>
     );

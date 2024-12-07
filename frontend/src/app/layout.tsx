@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Go Music",
+  title: "GoMusic",
   description: "Go Music app",
 };
 

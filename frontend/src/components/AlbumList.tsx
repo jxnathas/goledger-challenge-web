@@ -19,21 +19,19 @@ export const AlbumList: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1 className="text-2xl font-bold mb-4">Albums</h1>
+        <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
             {assets.album.length === 0 ? (
-                <p>Nenhum álbum encontrado.</p>
+            <p>Nenhum álbum encontrado.</p>
             ) : (
-                <div className="grid grid-cols-10 gap-4">
-                    {assets.album.map((album: Album) => (
-                        <AlbumCard
-                            key={album.id}
-                            name={album.name}
-                            artist={album.artist.name}
-                            image='https://placehold.co/160x160/white/darkgray'
-                        />
-                    ))}
-                </div>
+            assets.album.map((album: Album) => (
+            <div key={album.id} className="flex-shrink-0">
+                <AlbumCard
+                name={album.name}
+                artist={album.artist.name}
+                image={'https://placehold.co/160x160/white/darkgray'}
+                />
+            </div>
+            ))
             )}
         </div>
     );

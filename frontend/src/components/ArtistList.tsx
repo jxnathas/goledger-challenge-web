@@ -19,20 +19,18 @@ export const ArtistList: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1 className="text-2xl font-bold mb-4">Artists</h1>
+        <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
             {assets.artist.length === 0 ? (
                 <p>Nenhum artista encontrado.</p>
             ) : (
-                <div className="grid grid-cols-10 gap-4">
-                    {assets.artist.map((artist: Artist) => (
+                assets.artist.map((artist: Artist) => (
+                    <div key={artist.id} className="flex-shrink-0">
                         <ArtistCard
-                            key={artist.id}
                             name={artist.name}
                             image='https://placehold.co/160x160/white/darkgray'
                         />
-                    ))}
-                </div>
+                    </div>
+                ))
             )}
         </div>
     );
