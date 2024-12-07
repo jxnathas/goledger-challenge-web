@@ -24,10 +24,10 @@ export const ArtistList: React.FC = () => {
                 <p>Nenhum artista encontrado.</p>
             ) : (
                 assets.artist.map((artist: Artist) => (
-                    <div key={artist.id} className="flex-shrink-0">
+                    <div key={artist['@key']} className="flex-shrink-0">
                         <ArtistCard
                             name={artist.name}
-                            image='https://placehold.co/160x160/white/darkgray'
+                            image={`https://picsum.photos/seed/${artist['@key']}/200`}
                         />
                     </div>
                 ))

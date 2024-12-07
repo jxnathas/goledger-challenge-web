@@ -24,11 +24,11 @@ export const SongList: React.FC = () => {
                 <p>Nenhuma música encontrada.</p>
             ) : (
                 assets.song.map((song: Song) => (
-                    <div key={song.id} className="flex-shrink-0">
+                    <div key={song['@key']} className="flex-shrink-0">
                         <SongCard
                             name={song.name}
                             album={song.album.name}
-                            image={'https://placehold.co/160x160/white/darkgray'}
+                            image={`https://picsum.photos/seed/${song['@key']}/200`}
                         />
                     </div>
                 ))

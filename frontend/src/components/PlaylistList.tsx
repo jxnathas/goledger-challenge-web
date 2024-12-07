@@ -26,10 +26,10 @@ export const PlaylistList: React.FC = () => {
                 <p>Nenhuma playlist encontrada.</p>
             ) : (
                 assets.playlist.map((playlist: Playlist) => (
-                    <div key={playlist.id} className="flex-shrink-0">
+                    <div key={playlist['@key']} className="flex-shrink-0">
                         <PlaylistCard
                             name={playlist.name}
-                            image='https://placehold.co/160x160/white/darkgray'
+                            image={`https://picsum.photos/seed/${playlist['@key']}/200`}
                         />
                     </div>
                 ))

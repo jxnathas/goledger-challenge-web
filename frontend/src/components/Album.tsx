@@ -15,7 +15,7 @@ export const AlbumCard: React.FC<AlbumCardProps> = ({ name, artist, image }) => 
       className="w-40 h-40 mb-2 rounded-md object-cover"
     />
     <p className="text-sm font-bold text-center">{name}</p>
-    <p className="text-xs text-gray-600 text-center">{artist}</p>
+    <p className="text-xs font-bold  text-gray-600 text-center">{artist}</p>
   </div>
 );
   

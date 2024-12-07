@@ -11,6 +11,7 @@ type MusicContextType = {
     addAsset: (assetType: AssetType, asset: any) => Promise<void>;
     removeAsset: (assetType: AssetType, id: string) => Promise<void>;
     editAsset: (assetType: AssetType, id: string, updatedAsset: any) => Promise<void>;
+    readAsset: (assetType: AssetType, key: string, name: string) => Promise<any>;
 };
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
@@ -23,17 +24,28 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         playlist: [],
     });
 
+    const readAsset = async (assetType: AssetType, key: string, name: string) => {
+        try {
+            const response = await api.post('query/readAsset', {
+                key: {
+                    "@assetType": assetType,
+                    "@key": key,
+                    "name": name,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.error(`Erro ao carregar o ${assetType} com chave ${key}:`, error);
+            throw error;
+        }
+    };
+
     const loadAssets = useCallback(async (assetType: AssetType) => {
         try {
-            console.log(`Carregando ${assetType}...`);
             const response = await api.post('query/search', {
                 query: { selector: { "@assetType": assetType } },
             });
-            const transformedData = (response.data.result || []).map((item: any) => ({
-                ...item,
-                id: item['@key'].replace(`${assetType}:`, ''),
-            }));
-            setAssets((prev) => ({ ...prev, [assetType]: transformedData }));
+            setAssets((prev) => ({ ...prev, [assetType]: response.data.result}));
         } catch (error) {
             console.error(`Erro ao carregar ${assetType}s:`, error);
         }
@@ -78,7 +90,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     return (
-        <MusicContext.Provider value={{ assets, loadAssets, addAsset, removeAsset, editAsset }}>
+        <MusicContext.Provider value={{ assets, loadAssets, addAsset, removeAsset, editAsset, readAsset }}>
             {children}
         </MusicContext.Provider>
     );

@@ -1,37 +1,52 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Album } from '@/types/types';
 import { useMusic } from '@/app/context/MusicContext';
 import { AlbumCard } from './Album';
 
 export const AlbumList: React.FC = () => {
-    const { assets, loadAssets, removeAsset } = useMusic();
+    const { assets, loadAssets, removeAsset, readAsset } = useMusic();
+    const [albumsWithArtists, setAlbumsWithArtists] = useState<Album[]>([]);
 
     useEffect(() => {
-        loadAssets('album');
-    }, [loadAssets]);
+        const fetchData = async () => {
+            try {
+                await loadAssets('album');
 
-    const handleRemoveAlbum = async (id: string) => {
-        const confirmDelete = window.confirm('Tem certeza que deseja remover este álbum?');
-        if (confirmDelete) {
-            await removeAsset('album', id);
-        }
-    };
+                const updatedAlbums = await Promise.all(
+                    assets.album.map(async (album: Album) => {
+                        const artistResponse = await readAsset('artist', album.artist['@key'], album.artist.name);
+                        return {
+                            ...album,
+                            artist: {
+                                ...artistResponse,
+                            },
+                        };
+                    })
+                );
+                setAlbumsWithArtists(updatedAlbums);
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        };
+
+        fetchData();
+    }, [loadAssets, readAsset, assets.album]);
 
     return (
         <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
-            {assets.album.length === 0 ? (
-            <p>Nenhum álbum encontrado.</p>
+            {albumsWithArtists.length === 0 ? (
+                <p>Nenhum álbum encontrado.</p>
             ) : (
-            assets.album.map((album: Album) => (
-            <div key={album.id} className="flex-shrink-0">
-                <AlbumCard
-                name={album.name}
-                artist={album.artist?.name || 'Unknown Artist'}
-                image='https://placehold.co/160x160/white/darkgray'
-                />
-            </div>
-            ))
+                albumsWithArtists.map((album: Album) => (
+                    <div key={album['@key']} className="flex-shrink-0">
+                        <AlbumCard
+                            name={album.name}
+                            artist={album.artist?.name || 'Unknown Artist'}
+                            image={`https://picsum.photos/seed/${album['@key']}/200`}
+                        />
+                    </div>
+                ))
             )}
         </div>
     );
