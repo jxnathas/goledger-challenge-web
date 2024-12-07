@@ -21,7 +21,7 @@ export const Header = () => (
         </div>
 
         <div className="flex items-center flex-1 justify-end">
-            <button className="text-white py-2 px-4 rounded-full mr-4 font-bold hover:scale-105">Sign up</button>
+            <button className="text-darkcyan py-2 px-4 rounded-full mr-4 font-bold hover:scale-105">Sign up</button>
             <button className="bg-white text-darkcyan py-3 px-6 rounded-full font-bold hover:scale-105">Log in</button>
         </div>
     </header>

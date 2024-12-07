@@ -27,8 +27,8 @@ export const AlbumList: React.FC = () => {
             <div key={album.id} className="flex-shrink-0">
                 <AlbumCard
                 name={album.name}
-                artist={album.artist.name}
-                image={'https://placehold.co/160x160/white/darkgray'}
+                artist={album.artist?.name || 'Unknown Artist'}
+                image='https://placehold.co/160x160/white/darkgray'
                 />
             </div>
             ))
