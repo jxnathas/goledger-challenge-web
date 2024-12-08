@@ -36,7 +36,7 @@ export const AlbumList: React.FC = () => {
     return (
         <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
             {albumsWithArtists.length === 0 ? (
-                <p>Nenhum álbum encontrado.</p>
+                <p>No data found.</p>
             ) : (
                 albumsWithArtists.map((album: Album) => (
                     <div key={album['@key']} className="flex-shrink-0">

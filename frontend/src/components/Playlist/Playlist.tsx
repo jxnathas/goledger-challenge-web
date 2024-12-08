@@ -12,6 +12,6 @@ export const PlaylistCard: React.FC<PlaylistCardProps> = ({ name, image }) => (
       alt={`Cover of playlist ${name}`}
       className="w-40 h-40 mb-2 rounded-md object-cover"
     />
-    <p className="text-sm font-bold text-center">{name}</p>
+    <p className="text-sm font-bold text-center break-words break-all">{name}</p>
   </div>
 );

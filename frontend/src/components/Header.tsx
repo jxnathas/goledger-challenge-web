@@ -4,7 +4,7 @@ export const Header = () => (
     <header className="flex justify-between items-center mb-3">
         <div className="flex items-center flex-1">
             <a href="/" className="flex items-center">
-                <span className="text-lg font-bold bg-white rounded-full px-3 py-1">GoMusic</span>
+            <span className="text-2xl font-bold bg-white rounded-full px-4 py-2">GoMusic</span>
             </a>
         </div>
 
@@ -14,7 +14,7 @@ export const Header = () => (
                 <div className="absolute left-12 top-1/2 transform -translate-y-1/2 h-6 w-px bg-gray-300"></div>
                 <input
                     type="text"
-                    placeholder="What do you want to play?"
+                    placeholder="What's popping???"
                     className="bg-white text-darkcyan py-2 pl-14 pr-4 rounded-full w-full h-12 text-lg"
                 />
             </div>

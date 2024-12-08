@@ -11,19 +11,10 @@ export const PlaylistList: React.FC = () => {
         loadAssets("playlist");
     }, [loadAssets]);
 
-    const handleRemovePlaylist = async (id: string) => {
-        const confirmDelete = window.confirm(
-            "Tem certeza que deseja remover esta playlist?"
-        );
-        if (confirmDelete) {
-            await removeAsset("playlist", id);
-        }
-    };
-
     return (
         <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
             {assets.playlist.length === 0 ? (
-                <p>Nenhuma playlist encontrada.</p>
+                <p>No data found.</p>
             ) : (
                 assets.playlist.map((playlist: Playlist) => (
                     <div key={playlist['@key']} className="flex-shrink-0">

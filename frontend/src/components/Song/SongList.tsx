@@ -21,7 +21,7 @@ export const SongList: React.FC = () => {
     return (
         <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
             {assets.song.length === 0 ? (
-                <p>Nenhuma música encontrada.</p>
+                <p>No data found.</p>
             ) : (
                 assets.song.map((song: Song) => (
                     <div key={song['@key']} className="flex-shrink-0">
