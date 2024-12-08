@@ -1,5 +1,6 @@
 "use client";
 import { useSidebar } from "@/app/context/SidebarContext";
+import { ActionBar } from "@/components/Sidebar/ActionBar";
 
 interface ContainerProps {
   leftSidebar?: React.ReactNode;
@@ -21,14 +22,14 @@ export const Container: React.FC<ContainerProps> = ({
         <div className="text-white">{leftSidebar}</div>
       )}
 
-      <div className="bg-gradient-to-tr from-gray-200 to-gray-300 p-4 overflow-y-auto scrollbar-hide">
+      <div className="bg-gray-100 p-4 overflow-y-auto scrollbar-hide">
         {children}
       </div>
 
       {rightSidebar && rightSidebarVisible && (
-        <div className="bg-gray-200 text-black p-4 w-64 scrollbar-hide">
+        <ActionBar>
           {rightSidebar}
-        </div>
+        </ActionBar>
       )}
     </div>
   );

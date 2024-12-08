@@ -15,7 +15,7 @@ export default {
         cyanB7: "#77D8D5",
         darkcyan: "#002F39",
         darkcyan27: "#002027",
-
+        turq: "008b8b",
       },
     },
   },
