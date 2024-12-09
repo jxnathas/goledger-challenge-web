@@ -1,6 +1,5 @@
 "use client";
 import { useSidebar } from "@/app/context/SidebarContext";
-import { ActionBar } from "@/components/Sidebar/ActionBar";
 
 interface ContainerProps {
   leftSidebar?: React.ReactNode;
@@ -17,7 +16,6 @@ export const Container: React.FC<ContainerProps> = ({
 
   return (
     <div className="grid grid-cols-[auto_1fr_auto] h-screen">
-
       {leftSidebar && (
         <div className="text-white">{leftSidebar}</div>
       )}
@@ -26,10 +24,10 @@ export const Container: React.FC<ContainerProps> = ({
         {children}
       </div>
 
-      {rightSidebar && rightSidebarVisible && (
-        <ActionBar>
+      {rightSidebarVisible && (
+        <div className="relative">
           {rightSidebar}
-        </ActionBar>
+        </div>
       )}
     </div>
   );
