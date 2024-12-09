@@ -5,7 +5,7 @@ import { useMusic } from '@/app/context/MusicContext';
 import { useSidebar } from '@/app/context/SidebarContext';
 import { AlbumCard } from './Album';
 
-export const AlbumList: React.FC = () => {
+export const AlbumList: React.FC<{ searchResults: Album[] }> = ({ searchResults }) => {
     const { assets, loadAssets, readAsset } = useMusic();
     const { setSidebarContent, toggleRightSidebar, rightSidebarVisible } = useSidebar();
     const [albumsWithArtists, setAlbumsWithArtists] = useState<Album[]>([]);
@@ -40,21 +40,23 @@ export const AlbumList: React.FC = () => {
         }
     };
 
+    const albumsToDisplay = searchResults.length > 0 ? searchResults : albumsWithArtists;
+
     return (
         <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
-            {albumsWithArtists.length === 0 ? (
-                <p>No data found.</p>
-            ) : (
-                albumsWithArtists.map((album: Album) => (
-                    <div key={album['@key']} className="flex-shrink-0" onClick={() => handleAlbumClick(album)}>
-                        <AlbumCard
-                            name={album.name}
-                            artist={(album.artist as Artist)?.name || 'Unknown Artist'}
-                            image={`https://picsum.photos/seed/${album['@key']}/200`}
-                        />
-                    </div>
-                ))
-            )}
+          {albumsToDisplay.length === 0 ? (
+            <p>No data found.</p>
+          ) : (
+            albumsToDisplay.map((album: Album) => (
+              <div key={album['@key']} className="flex-shrink-0" onClick={() => handleAlbumClick(album)}>
+                <AlbumCard
+                  name={album.name}
+                  artist={(album.artist as Artist)?.name || 'Unknown Artist'}
+                  image={`https://picsum.photos/seed/${album['@key']}/200`}
+                />
+              </div>
+            ))
+          )}
         </div>
-    );
+      );
 };
