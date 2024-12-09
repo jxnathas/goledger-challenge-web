@@ -20,7 +20,6 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
     const [sidebarContent, setSidebarContent] = useState<any>(null);
 
     const toggleRightSidebar = () => setRightSidebarVisible((prev) => !prev);
-
     return (
         <SidebarContext.Provider
             value={{
