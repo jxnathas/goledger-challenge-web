@@ -1,105 +1,108 @@
 "use client";
-import { createContext, useCallback, useContext, useState } from 'react';
-import { Artist, Album, Song, Playlist } from '@/types/types';
+
+import React, { createContext, useCallback, useContext, useState } from "react";
+import { Artist, Album, Song, Playlist } from "@/types/types";
 import { api } from "../../../services/api";
 
-type AssetType = 'artist' | 'album' | 'song' | 'playlist';
+type AssetType = "artist" | "album" | "song" | "playlist";
+type Asset = Artist | Album | Song | Playlist;
 
-type MusicContextType = {
-    assets: Record<AssetType, any[]>;
+interface MusicContextType {
+    assets: Record<AssetType, Asset[]>;
     loadAssets: (assetType: AssetType) => Promise<void>;
-    addAsset: (assetType: AssetType, asset: any) => Promise<void>;
-    removeAsset: (assetType: AssetType, id: string) => Promise<void>;
-    editAsset: (assetType: AssetType, id: string, updatedAsset: any) => Promise<void>;
-    readAsset: (assetType: AssetType, key: string, name: string) => Promise<any>;
-};
+    addAsset: (assetType: AssetType, asset: Asset) => Promise<void>;
+    removeAsset: (assetType: AssetType, key: string) => Promise<void>;
+    editAsset: (assetType: AssetType, key: string, updatedAsset: Asset) => Promise<void>;
+    readAsset: (assetType: AssetType, key: string) => Promise<Asset | undefined>;
+}
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [assets, setAssets] = useState<Record<AssetType, any[]>>({
+    const [assets, setAssets] = useState<Record<AssetType, Asset[]>>({
         artist: [],
         album: [],
         song: [],
         playlist: [],
     });
 
-    const readAsset = async (assetType: AssetType, key: string, name: string) => {
+    const loadAssets = useCallback(async (assetType: AssetType) => {
         try {
-            const response = await api.post('query/readAsset', {
+            const response = await api.post("query/search", {
+                query: { selector: { "@assetType": assetType } },
+            });
+            setAssets((prev) => ({ ...prev, [assetType]: response.data.result }));
+        } catch (error) {
+            console.error(`Error loading ${assetType}s:`, error);
+        }
+    }, []);
+
+    const readAsset = useCallback(async (assetType: AssetType, key: string) => {
+        try {
+            const response = await api.post("query/readAsset", {
                 key: {
                     "@assetType": assetType,
                     "@key": key,
-                    "name": name,
                 },
             });
-            return response.data;
+            return response.data as Asset;
         } catch (error) {
-            console.error(`Erro ao carregar o ${assetType} com chave ${key}:`, error);
-            throw error;
-        }
-    };
-
-    const loadAssets = useCallback(async (assetType: AssetType) => {
-        try {
-            const response = await api.post('query/search', {
-                query: { selector: { "@assetType": assetType } },
-            });
-            setAssets((prev) => ({ ...prev, [assetType]: response.data.result}));
-        } catch (error) {
-            console.error(`Erro ao carregar ${assetType}s:`, error);
+            console.error(`Error loading ${assetType} with key ${key}:`, error);
+            return undefined;
         }
     }, []);
-    
-    const addAsset = async (assetType: AssetType, asset: any) => {
+
+    const addAsset = useCallback(async (assetType: AssetType, asset: Asset) => {
         try {
-            const response = await api.post('invoke/createAsset', asset);
+            const response = await api.post("invoke/createAsset", asset);
             setAssets((prev) => ({
                 ...prev,
                 [assetType]: [...prev[assetType], response.data],
             }));
-        } catch (err) {
-            console.error(`Erro ao adicionar ${assetType}`, err);
+        } catch (error) {
+            console.error(`Error adding ${assetType}:`, error);
         }
-    };
+    }, []);
 
-    const removeAsset = async (assetType: AssetType, id: string) => {
+    const removeAsset = useCallback(async (assetType: AssetType, key: string) => {
         try {
-            await api.post('invoke/deleteAsset', { id });
+            await api.post("invoke/deleteAsset", { key });
             setAssets((prev) => ({
                 ...prev,
-                [assetType]: prev[assetType].filter((item) => item.id !== id),
+                [assetType]: prev[assetType].filter((item) => item["@key"] !== key),
             }));
-        } catch (err) {
-            console.error(`Erro ao remover ${assetType}`, err);
+        } catch (error) {
+            console.error(`Error removing ${assetType}:`, error);
         }
-    };
+    }, []);
 
-    const editAsset = async (assetType: AssetType, id: string, updatedAsset: any) => {
+    const editAsset = useCallback(async (assetType: AssetType, key: string, updatedAsset: Asset) => {
         try {
-            const response = await api.put(`/invoke/updateAsset/${id}`, updatedAsset);
+            const response = await api.put(`/invoke/updateAsset/${key}`, updatedAsset);
             setAssets((prev) => ({
                 ...prev,
                 [assetType]: prev[assetType].map((item) =>
-                    item.id === id ? { ...item, ...response.data } : item
+                    item["@key"] === key ? { ...item, ...response.data } : item
                 ),
             }));
         } catch (error) {
-            console.error(`Erro ao editar ${assetType}:`, error);
+            console.error(`Error editing ${assetType}:`, error);
         }
-    };
+    }, []);
 
     return (
-        <MusicContext.Provider value={{ assets, loadAssets, addAsset, removeAsset, editAsset, readAsset }}>
+        <MusicContext.Provider
+            value={{ assets, loadAssets, addAsset, removeAsset, editAsset, readAsset }}
+        >
             {children}
         </MusicContext.Provider>
     );
 };
 
-export const useMusic = () => {
+export const useMusic = (): MusicContextType => {
     const context = useContext(MusicContext);
     if (!context) {
-        throw new Error('useMusic must be used within a MusicProvider');
+        throw new Error("useMusic must be used within a MusicProvider");
     }
     return context;
 };

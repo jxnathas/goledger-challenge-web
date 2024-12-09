@@ -10,19 +10,28 @@ export type Album = {
     '@key': string;
     name: string;
     year: number;
-    artist: Artist;
+    artist: {
+        '@assetType': 'artist';
+        '@key': string;
+    };
 };
 
 export type Song = {
     '@assetType': 'song';
     '@key': string;
     name: string;
-    album: Album;
+    album: {
+        '@assetType': 'album';
+        '@key': string;
+    };
 };
 
 export type Playlist = {
     '@assetType': 'playlist';
     '@key': string;
     name: string;
-    songs: Song[];
+    songs: {
+        '@assetType': 'song';
+        '@key': string;
+    }[];
 };

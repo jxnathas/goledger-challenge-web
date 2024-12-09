@@ -5,9 +5,9 @@ import { Container } from "@/components/Container";
 import { Header } from "@/components/Header";
 import { PlaylistList } from "@/components/Playlist/PlaylistList";
 import { Section } from "@/components/Section";
-import { Sidebar } from "@/components/Sidebar";
 import { SongList } from "@/components/Song/SongList";
 import { SidebarProvider } from "./context/SidebarContext";
+import { Sidebar } from "@/components/Sidebar/Sidebar";
 
 export default function Home() {
   return (
@@ -16,7 +16,7 @@ export default function Home() {
       <SidebarProvider>
       <Container
         leftSidebar={<Sidebar />}
-        rightSidebar={<div>Barra de informações ou ações</div>}
+        rightSidebar={<div></div>}
       >  
         <Section title="Artists">
           <ArtistList />

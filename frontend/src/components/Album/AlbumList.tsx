@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { Album } from '@/types/types';
+import { Album, Artist } from '@/types/types';
 import { useMusic } from '@/app/context/MusicContext';
+import { useSidebar } from '@/app/context/SidebarContext';
 import { AlbumCard } from './Album';
 
 export const AlbumList: React.FC = () => {
-    const { assets, loadAssets, removeAsset, readAsset } = useMusic();
+    const { assets, loadAssets, readAsset } = useMusic();
+    const { setSidebarContent, toggleRightSidebar, rightSidebarVisible } = useSidebar();
     const [albumsWithArtists, setAlbumsWithArtists] = useState<Album[]>([]);
 
     useEffect(() => {
@@ -14,17 +16,15 @@ export const AlbumList: React.FC = () => {
                 await loadAssets('album');
 
                 const updatedAlbums = await Promise.all(
-                    assets.album.map(async (album: Album) => {
-                        const artistResponse = await readAsset('artist', album.artist['@key'], album.artist.name);
+                    (assets.album as Album[]).map(async (album: Album) => {
+                        const artistResponse = await readAsset('artist', album.artist['@key']);
                         return {
                             ...album,
-                            artist: {
-                                ...artistResponse,
-                            },
+                            artist: artistResponse as Artist,
                         };
                     })
                 );
-                setAlbumsWithArtists(updatedAlbums);
+                setAlbumsWithArtists(updatedAlbums as Album[]);
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
             }
@@ -33,16 +33,23 @@ export const AlbumList: React.FC = () => {
         fetchData();
     }, [loadAssets, readAsset, assets.album]);
 
+    const handleAlbumClick = (album: Album) => {
+        setSidebarContent({ album, artist: album.artist });
+        if (!rightSidebarVisible) {
+            toggleRightSidebar();
+        }
+    };
+
     return (
         <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide">
             {albumsWithArtists.length === 0 ? (
                 <p>No data found.</p>
             ) : (
                 albumsWithArtists.map((album: Album) => (
-                    <div key={album['@key']} className="flex-shrink-0">
+                    <div key={album['@key']} className="flex-shrink-0" onClick={() => handleAlbumClick(album)}>
                         <AlbumCard
                             name={album.name}
-                            artist={album.artist?.name || 'Unknown Artist'}
+                            artist={(album.artist as Artist)?.name || 'Unknown Artist'}
                             image={`https://picsum.photos/seed/${album['@key']}/200`}
                         />
                     </div>
